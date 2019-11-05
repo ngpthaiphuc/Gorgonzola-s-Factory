@@ -1,6 +1,9 @@
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 //#include "Adafruit_TCS34725softi2c.h"
+//
+//#define SDApin 12
+//#define SCLpin 13
 
 //A4 = SDA (grey), A5 = SCL (blue)
 const int RED_PIN = 3;
@@ -29,6 +32,7 @@ void setup(){
 }
 
 void loop(){
+  feedbackLED();
   
   for(int i = 0; i < 5; i++){
     colorSensorCheck(SENSOR_A, "R");
@@ -42,7 +46,29 @@ void loop(){
   delay(500);
   digitalWrite(SENSOR_B, LOW);
   
-  //colorSensor(SENSOR_C, "B");
+//  for(int i = 0; i < 5; i++){
+//    colorSensorCheck(SENSOR_C, "B");
+//  }
+//  delay(500);
+//  digitalWrite(SENSOR_C, LOW);
+}
+
+void feedbackLED(){
+  if(isCorrect_R == true){
+     digitalWrite(RED_PIN, HIGH);
+  } else{
+    digitalWrite(RED_PIN, LOW);
+  }
+  if(isCorrect_G == true){
+    digitalWrite(GREEN_PIN, HIGH);
+  } else{
+    digitalWrite(GREEN_PIN, LOW);
+  }
+  if(isCorrect_B == true){
+    digitalWrite(BLUE_PIN, HIGH);
+  } else{
+    digitalWrite(BLUE_PIN, LOW);
+  }
 }
 
 void colorSensorCheck(int sensorPin, String color){
@@ -53,26 +79,35 @@ void colorSensorCheck(int sensorPin, String color){
   if(tcs.begin()){
     float red, green, blue;
 
-    tcs.setInterrupt(false);  // turn on LED
+    tcs.setInterrupt(false);  // turn on the sensor LED
   
     delay(60);  // takes 50ms to read
   
     tcs.getRGB(&red, &green, &blue);
     
-    tcs.setInterrupt(true);  // turn off LED
+    tcs.setInterrupt(true);  // turn off the sensor LED
   
-    if(red > green && red > blue && red > 135 && color == "R"){
-      digitalWrite(RED_PIN, HIGH);
-      isCorrect_R = true;
-      Serial.println("Red");
-    } else if (green > red && green > blue && color == "G"){
-      digitalWrite(GREEN_PIN, HIGH);
-      isCorrect_G = true;
-      Serial.println("Green");
-    } else if(blue > red && blue > green && color == "B"){
-      digitalWrite(BLUE_PIN, HIGH);
-      isCorrect_B = true;
-      Serial.println("Blue");
+    if(color == "R"){
+      if(red > green && red > blue && red > 135){
+        isCorrect_R = true;
+        Serial.println("Red");
+      } else {
+        isCorrect_R = false;
+      }
+    } else if(color == "G"){
+      if(green > red && green > blue){
+        isCorrect_G = true;
+        Serial.println("Green");
+      } else {
+        isCorrect_G = false;
+      }
+    } else if(color == "B"){
+      if(blue > red && blue > green){
+        isCorrect_B = true;
+        Serial.println("Blue");
+      } else {
+        isCorrect_B = false;
+      }
     }
   } else{
     Serial.println("Sensor not detected :(");
@@ -99,25 +134,25 @@ void colorSensorTest(int sensorPin, String sensorName){
     Serial.print("\tG:\t"); Serial.print(int(green)); 
     Serial.print("\tB:\t"); Serial.print(int(blue));
     Serial.print("\n");
-  
-    if(red > green && red > blue && red > 135){
-      digitalWrite(RED_PIN, HIGH);
-      digitalWrite(BLUE_PIN, LOW);
-      digitalWrite(GREEN_PIN, LOW);
-    } else if(blue > red && blue > green){
-      digitalWrite(BLUE_PIN, HIGH);
-      digitalWrite(RED_PIN, LOW);
-      digitalWrite(GREEN_PIN, LOW);
-    } else if (green > red && green > blue){
-      digitalWrite(GREEN_PIN, HIGH);
-      digitalWrite(RED_PIN, LOW);
-      digitalWrite(BLUE_PIN, LOW);
-    } else{
-      digitalWrite(RED_PIN, LOW);
-      digitalWrite(BLUE_PIN, LOW);
-      digitalWrite(GREEN_PIN, LOW);
-    }
+    
+//    if(red > green && red > blue && red > 135){
+//      digitalWrite(RED_PIN, HIGH);
+//      digitalWrite(BLUE_PIN, LOW);
+//      digitalWrite(GREEN_PIN, LOW);
+//    } else if(blue > red && blue > green){
+//      digitalWrite(BLUE_PIN, HIGH);
+//      digitalWrite(RED_PIN, LOW);
+//      digitalWrite(GREEN_PIN, LOW);
+//    } else if (green > red && green > blue){
+//      digitalWrite(GREEN_PIN, HIGH);
+//      digitalWrite(RED_PIN, LOW);
+//      digitalWrite(BLUE_PIN, LOW);
+//    } else{
+//      digitalWrite(RED_PIN, LOW);
+//      digitalWrite(BLUE_PIN, LOW);
+//      digitalWrite(GREEN_PIN, LOW);
+//    }
   } else {
     Serial.println(sensorName + " not found... check connections!");
-  } 
+  }
 }
