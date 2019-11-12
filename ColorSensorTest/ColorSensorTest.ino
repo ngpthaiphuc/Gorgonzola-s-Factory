@@ -40,31 +40,55 @@ void loop(){
   delay(500);
   digitalWrite(SENSOR_A, LOW);
 
-  for(int i = 0; i < 5; i++){
-    colorSensorCheck(SENSOR_B, "G");
-  }
-  delay(500);
-  digitalWrite(SENSOR_B, LOW);
-  
 //  for(int i = 0; i < 5; i++){
-//    colorSensorCheck(SENSOR_C, "B");
+//    colorSensorCheck(SENSOR_B, "G");
 //  }
 //  delay(500);
-//  digitalWrite(SENSOR_C, LOW);
+//  digitalWrite(SENSOR_B, LOW);
+  
+  for(int i = 0; i < 5; i++){
+    colorSensorCheck(SENSOR_C, "B");
+  }
+  delay(500);
+  digitalWrite(SENSOR_C, LOW);
 }
 
 void feedbackLED(){
   if(isCorrect_R == true){
+//     digitalWrite(RED_PIN, HIGH);
+//     delay(50);
+//     digitalWrite(RED_PIN, LOW);
+//     delay(50);
+//     digitalWrite(RED_PIN, HIGH);
+//     delay(50);
+//     digitalWrite(RED_PIN, LOW);
+//     delay(50);
      digitalWrite(RED_PIN, HIGH);
   } else{
     digitalWrite(RED_PIN, LOW);
   }
   if(isCorrect_G == true){
+//    digitalWrite(GREEN_PIN, HIGH);
+//    delay(50);
+//    digitalWrite(GREEN_PIN, LOW);
+//    delay(50);
+//    digitalWrite(GREEN_PIN, HIGH);
+//    delay(50);
+//    digitalWrite(GREEN_PIN, LOW);
+//    delay(50);
     digitalWrite(GREEN_PIN, HIGH);
   } else{
     digitalWrite(GREEN_PIN, LOW);
   }
   if(isCorrect_B == true){
+//    digitalWrite(BLUE_PIN, HIGH);
+//    delay(50);
+//    digitalWrite(BLUE_PIN, LOW);
+//    delay(50);
+//    digitalWrite(BLUE_PIN, HIGH);
+//    delay(50);
+//    digitalWrite(BLUE_PIN, LOW);
+//    delay(50);
     digitalWrite(BLUE_PIN, HIGH);
   } else{
     digitalWrite(BLUE_PIN, LOW);
