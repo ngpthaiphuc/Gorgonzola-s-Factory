@@ -1,16 +1,26 @@
 #include <Wire.h>
 #include <Servo.h>
 #include "Adafruit_TCS34725.h"
-//#include "Adafruit_TCS34725softi2c.h"
-//
-//#define SDApin 12
-//#define SCLpin 13
 
 //A4 = SDA (grey), A5 = SCL (blue)
+
+//TCA Multiplexer:
+#define TCAADDR 0x70
+
+void tcaselect(uint8_t i){
+  if(i > 7) return;
+
+  Wire.beginTransmission(TCAADDR);
+  Wire.write(1 << i);
+  Wire.endTransmission();
+}
+
+//LEDs Pins
 const int RED_PIN = 3;
 const int GREEN_PIN = 5;
 const int BLUE_PIN = 6;
 
+//Servo for Barrier
 const int SERVO_PIN = 11;
 Servo servo;
 
@@ -19,15 +29,16 @@ Servo servo;
 //const int SENSOR_B = 9;
 //const int SENSOR_C = 10;
 
-//Color Sensor Addresses
-const uint8_t SENSOR_A = 0x29;
-const uint8_t SENSOR_B = 0x30;
-const uint8_t SENSOR_C = 0x31;
+//Color Sensor Ports
+const uint8_t SENSOR_A = 3;
+const uint8_t SENSOR_B = 5;
+const uint8_t SENSOR_C = 7;
 
 Adafruit_TCS34725 tcs_A = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 Adafruit_TCS34725 tcs_B = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 Adafruit_TCS34725 tcs_C = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);  
 
+//Based on the output of the color sensors
 boolean isCorrect_R = false;
 boolean isCorrect_G = false;
 boolean isCorrect_B = false;
@@ -41,46 +52,48 @@ void setup(){
 
   servo.attach(SERVO_PIN);
 
-//Sensor Pins Version
-//  pinMode(SENSOR_A, OUTPUT);
-//  pinMode(SENSOR_B, OUTPUT);
-//  pinMode(SENSOR_C, OUTPUT);
-
-//Sensor Address Version
-  if(tcs_A.begin(SENSOR_A)){
-    Serial.println("Sensor A is activated!");
+  //Sensor Ports Version
+  tcaselect(SENSOR_A);
+  if(tcs_A.begin()){
+    Serial.println("Sensor A is activated @ Port 3");
   } else{
     Serial.println("Sensor A not found");
   }
-  if(tcs_B.begin(SENSOR_B)){
-    Serial.println("Sensor B is activated!");
+  tcaselect(SENSOR_B);
+  if(tcs_B.begin()){
+    Serial.println("Sensor B is activated! @ Port 5");
   } else{
     Serial.println("Sensor B not found");
   }
-  if(tcs_C.begin(SENSOR_C)){
-    Serial.println("Sensor C is activated!");
+  tcaselect(SENSOR_C);
+  if(tcs_C.begin()){
+    Serial.println("Sensor C is activated! @ Port 7");
   } else{
     Serial.println("Sensor C not found");
   }
+  
+  //Sensor Pins Version
+//  pinMode(SENSOR_A, OUTPUT);
+//  pinMode(SENSOR_B, OUTPUT);
+//  pinMode(SENSOR_C, OUTPUT);
 }
 
 void loop(){
   feedbackLED();
 
-  if(isCorrect_R){
+  if(isCorrect_R && isCorrect_G && isCorrect_B){
     servo.write(160);
-    delay(1000);
+    Serial.println("Yeet");
   } else {
     servo.write(20);
-    delay(1000);
   }
   
-//Sensor Address Version
-  colorSensorCheck(tcs_A, "R");
-//  colorSensorCheck(tcs_B, "G");
-//  colorSensorCheck(tcs_C, "B");
+  //Sensor Ports Version
+  colorSensorCheck(tcs_A, SENSOR_A, "R");
+  colorSensorCheck(tcs_B, SENSOR_B, "G");
+  colorSensorCheck(tcs_C, SENSOR_C, "B");
 
-//Sensor Pins Version  
+  //Sensor Pins Version  
 //  for(int i = 0; i < 5; i++){
 //    colorSensorCheck(SENSOR_A, "R");
 //  }
@@ -126,17 +139,18 @@ void feedbackLED(){
   }
 }
 
-//Sensor Addresses Version
-void colorSensorCheck(Adafruit_TCS34725 sensor, String color){
+//Sensor Ports Version
+void colorSensorCheck(Adafruit_TCS34725 sensor, uint8_t port, String color){
   float red, green, blue;
 
-  sensor.setInterrupt(false);  // turn on the sensor LED
-
-  delay(60);  // takes 50ms to read
-
+  tcaselect(port);
+  // turn on the sensor LED
+  sensor.setInterrupt(false);
+  delay(50);
+  //Get the RGB value from the sensor
   sensor.getRGB(&red, &green, &blue);
-  
-  sensor.setInterrupt(true);  // turn off the sensor LED
+  // turn off the sensor LED
+  sensor.setInterrupt(true);
 
   if(color == "R"){
     if(red > green && red > blue && red > 135){

@@ -2,9 +2,11 @@
 #include <PCM.h>
 
 const int BUTTON_PIN_A = 13;
-//const int BUTTON_PIN_B = 12;
+const int BUTTON_PIN_B = 12;
 
-const int SPEAKER_PIN = 11;
+//Feedback stuff
+const int LED_PIN = 11;
+const int SPEAKER_PIN = 10;
 // notes in the melody:
 // notes of the moledy followed by the duration.
 // a 4 means a quarter note, 8 an eighteenth , 16 sixteenth, so on
@@ -57,8 +59,46 @@ void setup() {
   
   // make the pushbutton's pin an input:
   pinMode(BUTTON_PIN_A, INPUT);
-//  pinMode(BUTTON_PIN_B, INPUT);
+  pinMode(BUTTON_PIN_B, INPUT);
 
+  pinMode(LED_PIN, OUTPUT);
+
+//  playMelody();
+  //Play encoded MP3 sequence
+//  startPlayback(sample, sizeof(sample));
+}
+
+void loop() {
+  // read the input pin and print out the state of the button:
+  int buttonState_A = digitalRead(BUTTON_PIN_A);
+  int buttonState_B = digitalRead(BUTTON_PIN_B);
+  
+  Serial.println(buttonState_A); // 1 is on (pushed), 0 is off
+  Serial.println(buttonState_B); // 1 is on (pushed), 0 is off
+
+  if(buttonState_A == 1 && buttonState_B == 1){
+    blinkyBoi(LED_PIN);
+  } else {
+    digitalWrite(LED_PIN, LOW);
+  }
+  
+  delay(10); // delay in between reads for stability (1000 = 1 second).
+}
+
+void blinkyBoi(int pin){
+  digitalWrite(pin, HIGH);
+  delay(50);
+  digitalWrite(pin, LOW);
+  delay(50);
+  digitalWrite(pin, HIGH);
+  delay(50);
+  digitalWrite(pin, LOW);
+  delay(50);
+  digitalWrite(pin, HIGH);
+  delay(50);
+}
+
+void playMelody(){
   // Remember, the array is twice the number of notes (notes + durations)
   for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
 
@@ -82,14 +122,4 @@ void setup() {
     // stop the waveform generation before the next note.
     noTone(SPEAKER_PIN);
   }
-//  startPlayback(sample, sizeof(sample));
-}
-
-void loop() {
-  // read the input pin and print out the state of the button:
-  int buttonState = digitalRead(BUTTON_PIN_A);
-  
-  Serial.println(buttonState); // 1 is on (pushed), 0 is off
-  delay(10);
-  // delay in between reads for stability (1000 = 1 second).
 }
