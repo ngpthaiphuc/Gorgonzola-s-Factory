@@ -15,10 +15,19 @@ void tcaselect(uint8_t i){
   Wire.endTransmission();
 }
 
-//LEDs Pins
+//LEDs Pins (Comment out when you're ready for feedback)
 const int RED_PIN = 3;
 const int GREEN_PIN = 5;
 const int BLUE_PIN = 6;
+
+//Offical LEDs for feedback (uncomment the code below and wire them accordingly. There are 6 LEDs, 3 red and 3 yellow because we have an abundance of those. Just wire them accordingly to the port.
+//Make sure to add resistor for ground. Go down and uncomment more stuff)
+//const int YAY_A = 3;
+//const int NOPE_A = 4;
+//const int YAY_B = 6;
+//const int NOPE_B = 7;
+//const int YAY_C = 8;
+//const int NOPE_C = 9;
 
 //Servo for Barrier
 const int SERVO_PIN = 11;
@@ -45,10 +54,19 @@ boolean isCorrect_B = false;
 
 void setup(){
   Serial.begin(9600);
-  
+
+  //Comment out when you're ready for feedback
   pinMode(RED_PIN, OUTPUT);
   pinMode(BLUE_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
+
+  //Uncomment out when LEDs for feedback is wired (there are more to comment/uncomment below)
+//  pinMode(YAY_A, OUTPUT);
+//  pinMode(NOPE_A, OUTPUT);
+//  pinMode(YAY_B, OUTPUT);
+//  pinMode(NOPE_B, OUTPUT);
+//  pinMode(YAY_C, OUTPUT);
+//  pinMode(NOPE_C, OUTPUT);
 
   servo.attach(SERVO_PIN);
 
@@ -79,7 +97,11 @@ void setup(){
 }
 
 void loop(){
-  feedbackLED();
+  //Comment out LEDTest(); and uncomment feedbackLED();
+  //LEDTest -> Red LED turns on if it detects red, green if green, etc.
+  LEDTest();
+  //feedbackLED -> If the right color is placed in front of a sensor, the LED turns from red to yellow! Else it will stay red
+  //feedbackLED();
 
   if(isCorrect_R && isCorrect_G && isCorrect_B){
     servo.write(160);
@@ -113,16 +135,9 @@ void loop(){
 //  digitalWrite(SENSOR_C, LOW);
 }
 
-void feedbackLED(){
+//Comment this whole method out (ctrl + /)
+void LEDTest(){
   if(isCorrect_R == true){
-//     digitalWrite(RED_PIN, HIGH);
-//     delay(50);
-//     digitalWrite(RED_PIN, LOW);
-//     delay(50);
-//     digitalWrite(RED_PIN, HIGH);
-//     delay(50);
-//     digitalWrite(RED_PIN, LOW);
-//     delay(50);
      digitalWrite(RED_PIN, HIGH);
   } else{
     digitalWrite(RED_PIN, LOW);
@@ -138,6 +153,31 @@ void feedbackLED(){
     digitalWrite(BLUE_PIN, LOW);
   }
 }
+
+//Last thing to uncomment!
+//void feedbackLED(){
+//  if(isCorrect_R == true){
+//    digitalWrite(NOPE_A, LOW);
+//    digitalWrite(YAY_A, HIGH);
+//  } else{
+//    digitalWrite(YAY_A, LOW);
+//    digitalWrite(NOPE_A, HIGH);
+//  }
+//  if(isCorrect_G == true){
+//    digitalWrite(NOPE_B, LOW);
+//    digitalWrite(YAY_B, HIGH);
+//  } else{
+//    digitalWrite(YAY_B, LOW);
+//    digitalWrite(NOPE_B, HIGH);
+//  }
+//  if(isCorrect_B == true){
+//    digitalWrite(NOPE_C, LOW);
+//    digitalWrite(YAY_C, HIGH);
+//  } else{
+//    digitalWrite(YAY_C, LOW);
+//    digitalWrite(NOPE_C, HIGH);
+//  }
+//}
 
 //Sensor Ports Version
 void colorSensorCheck(Adafruit_TCS34725 sensor, uint8_t port, String color){
