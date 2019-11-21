@@ -53,7 +53,8 @@ boolean isCorrect_G = false;
 boolean isCorrect_B = false;
 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(115200);
+  Serial.println("Setting up");
 
   //Comment out when you're ready for feedback
   pinMode(RED_PIN, OUTPUT);
@@ -193,14 +194,14 @@ void colorSensorCheck(Adafruit_TCS34725 sensor, uint8_t port, String color){
   sensor.setInterrupt(true);
 
   if(color == "R"){
-    if(red > green && red > blue && red > 135){
+    if(red > green && red > blue && red > 99){
       isCorrect_R = true;
       Serial.println("Red");
     } else {
       isCorrect_R = false;
     }
   } else if(color == "G"){
-    if(green > red && green > blue){
+    if(green > red && green > blue && green > 100){
       isCorrect_G = true;
       Serial.println("Green");
     } else {
@@ -214,6 +215,10 @@ void colorSensorCheck(Adafruit_TCS34725 sensor, uint8_t port, String color){
       isCorrect_B = false;
     }
   }
+//  Serial.print("R:\t"); Serial.print(int(red)); 
+//  Serial.print("\tG:\t"); Serial.print(int(green)); 
+//  Serial.print("\tB:\t"); Serial.print(int(blue));
+//  Serial.print("\n");
 }
 
 //Sensor Pins Version
