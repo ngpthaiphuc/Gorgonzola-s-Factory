@@ -30,8 +30,8 @@ const int BLUE_PIN = 6;
 //const int NOPE_C = 9;
 
 //Servo for Barrier
-const int SERVO_PIN = 11;
-Servo servo;
+//const int SERVO_PIN = 11;
+//Servo servo;
 
 //Color Sensor Pins for Power
 //const int SENSOR_A = 8;
@@ -69,10 +69,11 @@ void setup(){
 //  pinMode(YAY_C, OUTPUT);
 //  pinMode(NOPE_C, OUTPUT);
 
-  servo.attach(SERVO_PIN);
+//  servo.attach(SERVO_PIN);
 
   //Sensor Ports Version
   tcaselect(SENSOR_A);
+//  Serial.println("Selecting");
   if(tcs_A.begin()){
     Serial.println("Sensor A is activated @ Port 3");
   } else{
@@ -104,12 +105,12 @@ void loop(){
   //feedbackLED -> If the right color is placed in front of a sensor, the LED turns from red to yellow! Else it will stay red
   //feedbackLED();
 
-  if(isCorrect_R && isCorrect_G && isCorrect_B){
-    servo.write(160);
-    Serial.println("Yeet");
-  } else {
-    servo.write(20);
-  }
+//  if(isCorrect_R && isCorrect_G && isCorrect_B){
+//    servo.write(160);
+//    Serial.println("Yeet");
+//  } else {
+//    servo.write(20);
+//  }
   
   //Sensor Ports Version
   colorSensorCheck(tcs_A, SENSOR_A, "R");
@@ -194,14 +195,14 @@ void colorSensorCheck(Adafruit_TCS34725 sensor, uint8_t port, String color){
   sensor.setInterrupt(true);
 
   if(color == "R"){
-    if(red > green && red > blue && red > 99){
+    if(red > green && red > blue && red > 92){//92
       isCorrect_R = true;
       Serial.println("Red");
     } else {
       isCorrect_R = false;
     }
   } else if(color == "G"){
-    if(green > red && green > blue && green > 100){
+    if(green > red && green > blue && green > 95){//95
       isCorrect_G = true;
       Serial.println("Green");
     } else {
